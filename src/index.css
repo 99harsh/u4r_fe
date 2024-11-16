@@ -1,0 +1,101 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+  --primary-color: #6c63ff;
+  /* --secondary-color: #4a90e2; */
+  --secondary-color: #9954ff;
+  --dark-bg: #1a1a1a;
+  --darker-bg: #121212;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  background-image: radial-gradient(#cccccc2b 1px, transparent 0);
+
+  background-size: 30px 30px;
+}
+
+.navbar {
+  background-color: var(--darker-bg) !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:disabled{
+ background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-control {
+  background-color: var(--darker-bg);
+  border-color: #333;
+  color: var(--text-primary);
+}
+
+.form-control:focus {
+  background-color: var(--darker-bg);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.25);
+}
+
+.card {
+  background-color: var(--darker-bg);
+  border: 1px solid #333;
+}
+
+.url-input-container {
+  background: var(--darker-bg);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+
+
+
+input::placeholder {
+  color: #b3b3b3 !important;
+  opacity: 1; /* Firefox */
+}
+
+.bg-darker-bg {
+  background-color: var(--darker-bg);
+}

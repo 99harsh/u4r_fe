@@ -1,0 +1,156 @@
+@use "sass:math";
+@use "sass:meta";
+
+@function strip-unit($value) {
+  @if meta.type-of($value)=='number' and not math.is-unitless($value) {
+    @return math.div($value, $value * 0 + 1);
+  }
+
+  @return $value;
+}
+
+@mixin fluid-type($min-vw, $mid-vw, $max-vw, $min-font-size, $mid-font-size, $max-font-size) {
+  $u1: math.unit($min-vw);
+  $u2: math.unit($mid-vw);
+  $u3: math.unit($max-vw);
+  $u4: math.unit($min-font-size);
+  $u5: math.unit($mid-font-size);
+  $u6: math.unit($max-font-size);
+
+  @if $u1 ==$u2 and $u1 ==$u3 and $u1 ==$u4 and $u1 ==$u5 and $u1 ==$u6 {
+    & {
+      font-size: $min-font-size;
+
+      @media screen and (min-width: $min-vw) and (max-width: $mid-vw) {
+        font-size: calc(#{$min-font-size} + #{strip-unit($mid-font-size - $min-font-size)} * ((100vw - #{$min-vw}) / #{strip-unit($mid-vw - $min-vw)})) !important;
+      }
+
+      @media screen and (min-width: $mid-vw) and (max-width: $max-vw) {
+        font-size: calc(#{$mid-font-size} + #{strip-unit($max-font-size - $mid-font-size)} * ((100vw - #{$mid-vw}) / #{strip-unit($max-vw - $mid-vw)})) !important;
+      }
+
+      @media screen and (min-width: $max-vw) {
+        font-size: $max-font-size;
+      }
+    }
+  }
+}
+
+html {
+  @include fluid-type(320px, 1920px, 2560px, 10px, 16px, 20px);
+}
+
+.oo-heading {
+  color: #eb568e;
+}
+
+.logo {
+  background: radial-gradient(100.24% 97.1% at 5.56% 79.01%, #6c63ff 0, #b963e7 100%);
+  -webkit-text-fill-color: #0000;
+
+  // background: linear-gradient(90deg, #6c63ff -.15%, #eb568e 18.86%, #b963e7 50.49%, #6c63ff 100.67%);
+  background-color: #6c63ff;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #0000;
+  font-weight: 700;
+}
+
+.error-container {
+  position: absolute;
+}
+
+.shimmer-container {
+  .card {
+
+    margin: 0.83rem auto;
+
+    padding: 1.25rem;
+  }
+
+  @keyframes placeholderShimmer {
+    0% {
+      background-position: -468px 0;
+    }
+
+    100% {
+      background-position: 468px 0;
+    }
+  }
+
+  .shimmer-animation {
+    background-color: #2e2e2e;
+    /* Dark base color */
+    background-image: linear-gradient(to right,
+        #2e2e2e 0%,
+        /* Dark base color */
+        #3a3a3a 20%,
+        /* Slightly lighter shade */
+        #2e2e2e 40%,
+        /* Dark base color */
+        #2e2e2e 100%
+        /* Dark base color */
+      );
+    background-repeat: no-repeat;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeholderShimmer;
+    animation-timing-function: linear;
+  }
+
+  .loader {
+    &-shimmer {
+      &-banner {
+        height: 1rem;
+        width: 100%;
+        background-size: 50rem 18rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+      }
+
+      &-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+      }
+
+      &-title {
+        height: 1.5rem;
+        flex: 0 0 auto;
+        width: 8rem;
+        border-radius: 5px;
+      }
+
+      &-rating {
+        height: 1.5rem;
+        flex: 0 0 auto;
+        width: 5.83rem;
+        border-radius: 5px;
+      }
+
+      &-list {
+        height: 1.5rem;
+        width: 10rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      &-info {
+        height: 1.5rem;
+        width: 80%;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}

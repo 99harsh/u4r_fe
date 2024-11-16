@@ -1,0 +1,54 @@
+.form-switch {
+    .form-check-input {
+        cursor: pointer;
+        background-color: #666;
+        border-color: #888;
+
+        &:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    }
+    label{
+        cursor: pointer;
+    }
+
+   
+}
+
+
+.client-card-container{
+    background-color: #d5d5d5 !important;
+    .client-card {
+        transition: transform 0.3s ease;
+        &:hover{
+            transform: translateY(-5px);
+        }
+    }
+    
+}
+.heading-text {
+    -webkit-text-fill-color: #0000;
+    background: linear-gradient(90deg, #6c63ff 15%, #eb568e 18.86%, #b963e7 50.49%, #6c63ff 100.67%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    font-weight: bold !important;
+}
+
+.subheading-text {
+    font-size: 1rem !important;
+}
+.link-game{
+    color: #eb568e;
+}
+
+.spinner-backhalf{
+    position: absolute;
+    right: 0.43rem;
+    top: 0.43rem;
+    z-index: 999;
+}
+.spinner-small{
+    height: 1.3rem !important;
+    width: 1.3rem !important;
+}
