@@ -40,6 +40,8 @@ html {
   @include fluid-type(320px, 1920px, 2560px, 10px, 16px, 20px);
 }
 
+//Main Page
+
 .oo-heading {
   color: #eb568e;
 }
@@ -47,8 +49,6 @@ html {
 .logo {
   background: radial-gradient(100.24% 97.1% at 5.56% 79.01%, #6c63ff 0, #b963e7 100%);
   -webkit-text-fill-color: #0000;
-
-  // background: linear-gradient(90deg, #6c63ff -.15%, #eb568e 18.86%, #b963e7 50.49%, #6c63ff 100.67%);
   background-color: #6c63ff;
   -webkit-background-clip: text;
   background-clip: text;
@@ -56,9 +56,17 @@ html {
   font-weight: 700;
 }
 
+// End Of Main Page
+
+//Global Error Message Container
+
 .error-container {
   position: absolute;
 }
+
+//End Of Global Error Message Container
+
+//Shimmer Loader Container
 
 .shimmer-container {
   .card {
@@ -151,6 +159,48 @@ html {
           margin-bottom: 0;
         }
       }
+
+      &-graph{
+        height: 20.5rem;
+        width: 100%;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
     }
   }
+}
+
+//End Of Shimmer Loader Container
+
+
+//Navbar/Header
+.navbar-custom{
+  flex-direction: row !important;
+
+  .nav-item{
+    width: auto !important;
+  }
+}
+//End Navbar Header
+
+//Pi Graph Options
+.btn-custom-group{
+  background-color: #FfF;
+  
+  &:hover, &:focus, &:active, &-selected{
+    background-color: #6c63ff !important;
+    color: #Fff !important;
+  }
+}
+
+.selected-chart{
+  color: #6c63ff;
+}
+
+.chart-option-icon-container{
+  cursor: pointer;
 }

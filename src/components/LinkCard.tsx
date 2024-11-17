@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Copy, BarChart2, Check } from 'lucide-react';
+import {format} from 'date-fns';
 
 interface LinkCardProps {
+  id:string;
   title: string;
   shorten_url: string;
   destination_url: string;
@@ -11,6 +13,7 @@ interface LinkCardProps {
 }
 
 const LinkCard: React.FC<LinkCardProps> = ({
+  id,
   title,
   shorten_url,
   destination_url,
@@ -30,7 +33,7 @@ const LinkCard: React.FC<LinkCardProps> = ({
     <div className="card mb-3 animate-fade-in">
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-start mb-2">
-          <h5 className="card-title mb-0 text-light">{title}</h5>
+          <h4 className="card-title mb-0 text-light">{title}</h4>
           <span className="badge bg-success">{click_count} views</span>
         </div>
         
@@ -75,8 +78,8 @@ const LinkCard: React.FC<LinkCardProps> = ({
         </div>
 
         <div className="d-flex justify-content-between align-items-center">
-          <small className="text-secondary">Created: {created_at}</small>
-          <Link to="/analytics" className="btn btn-sm btn-primary">
+          <small className="text-secondary">Created: {format(created_at, 'dd-MMM-yyyy')}</small>
+          <Link to={`/analytics?id=${id}`} className="btn btn-sm btn-primary">
             <BarChart2 size={18} className="me-1" />
             Analytics
           </Link>

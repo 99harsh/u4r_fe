@@ -240,12 +240,12 @@ const Dashboard = () => {
                     className={`form-control ${errorMessage.custom_short_url !== "" ? 'is-invalid' : ""} ${isBackHalfAvailable ? 'is-valid' : ''}`}
                     onChange={(e) => handleInputChange('custom_short_url', e.target.value)}
                   />
-                    {
-                            isBackHalfLoading ?
-                              <div className="spinner-border rounded-circle spinner-small spinner-backhalf text-white" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                              </div> : ""
-                          }
+                  {
+                    isBackHalfLoading ?
+                      <div className="spinner-border rounded-circle spinner-small spinner-backhalf text-white" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div> : ""
+                  }
                 </div>
                 {
                   errorMessage.custom_short_url !== "" ?
@@ -299,7 +299,6 @@ const Dashboard = () => {
             <div className="row">
               {urlData.map((link: any) => (
                 <div className='col-md-6' key={link.id}>
-
                   <LinkCard {...link} />
                 </div>
               ))}

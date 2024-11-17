@@ -92,7 +92,7 @@ const Register = () => {
               <div className="text-center mb-4">
                 <UserPlus size={40} className="text-secondary mb-2" />
                 <h2 className="card-title text-light">Create Account</h2>
-                <p className="text-secondary">Join our community today</p>
+                <p className="text-secondary">Create your account today!</p>
               </div>
 
               <form onSubmit={handleSubmit}>

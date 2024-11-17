@@ -1,7 +1,14 @@
 
 import { useSpring, animated } from 'react-spring';
-import { BarChart2, TrendingUp, Users, Globe } from 'lucide-react';
-import { Line } from 'react-chartjs-2'
+import { BarChart2, TrendingUp, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
+import { differenceInDays, subDays, isAfter } from "date-fns";
+import ViewCountChart from '../components/ViewCountChart';
+import ViewLocationChart from '../components/ViewLocationChart';
+import ShimmerAnalyticsCard from '../components/ShimmerAnalyticsCard';
+import ShimmerAnalyticsGraph from '../components/ShimmerAnalyticsGraph';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +18,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions
 } from 'chart.js'
 
 ChartJS.register(
@@ -23,51 +29,6 @@ ChartJS.register(
   Tooltip,
   Legend
 )
-
-const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  datasets: [
-    {
-      label: 'Monthly Sales',
-      data: [65, 59, 80, 81, 56, 55, 40],
-      fill: false,
-      borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1
-    }
-  ]
-}
-
-
-
-
-const options: ChartOptions<'line'> = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'bottom' as const,
-      
-    },
-    title: {
-      display: true,
-      text: 'Monthly Sales Data',
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Sales ($)',
-      },
-    },
-    x: {
-      title: {
-        display: true,
-        text: 'Month',
-      },
-    },
-  },
-}
 
 
 const Analytics = () => {
@@ -81,78 +42,144 @@ const Analytics = () => {
     config: { duration: 500 }
   });
 
-  // Mock data for demonstration
-  const stats = {
-    totalClicks: 245,
-    dailyAverage: 35,
-    uniqueVisitors: 189,
-    topCountries: [
-      { country: 'United States', visits: 98 },
-      { country: 'United Kingdom', visits: 45 },
-      { country: 'Germany', visits: 32 },
-    ],
-    dailyStats: [
-      { date: '2024-03-10', visits: 28 },
-      { date: '2024-03-11', visits: 35 },
-      { date: '2024-03-12', visits: 42 },
-      { date: '2024-03-13', visits: 38 },
-      { date: '2024-03-14', visits: 45 },
-    ],
-    referrers: [
-      { source: 'Direct', visits: 120 },
-      { source: 'Twitter', visits: 85 },
-      { source: 'LinkedIn', visits: 40 },
-    ],
+  const navigator = useNavigate();
+
+  const [searchParams, setSearchParam] = useSearchParams();
+  const [analytics, setAnalytics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalClicks, setTotalClicks] = useState(0);
+  const [dailyAverage, setDailyAverage] = useState(0);
+  const [last7DaysClicks, setLast7DaysClicks] = useState(0);
+
+  const calculateStats = (data: any) => {
+    const history = data;
+    // Total clicks
+    const total = history.length;
+    setTotalClicks(total);
+
+    // Daily average clicks
+    const sortedHistory = history.sort((a: any, b: any) =>
+      new Date(a.click_ts).getTime() - new Date(b.click_ts).getTime()
+    );
+    const firstDate = new Date(sortedHistory[0].click_ts);
+    const lastDate = new Date(sortedHistory[sortedHistory.length - 1].click_ts);
+    const totalDays = Math.max(differenceInDays(lastDate, firstDate), 1);
+    setDailyAverage(Number((total / totalDays).toFixed(2)));
+
+    // Last 7 days click count
+    const sevenDaysAgo = subDays(new Date(), 7);
+    const recentClicks = history.filter((h: { click_ts: string }) =>
+      isAfter(new Date(h.click_ts), sevenDaysAgo)
+    );
+    setLast7DaysClicks(recentClicks.length);
+
+    // Group data for countries
+
+
   };
+
+  const loadAnalytics = async (id: any) => {
+    try {
+      setIsLoading(true)
+      const { data } = await axios.get(`https://u4r.in/v1/user/url/${id}`, {
+        headers: {
+          access_token: localStorage.getItem('token')
+        }
+      })
+      if (data.status === 200) {
+        calculateStats(data.data.history)
+        setAnalytics(data.data.history);
+      }
+
+      console.log("Data From Analytics", data);
+    } catch (error) {
+
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id) {
+      loadAnalytics(id)
+    } else {
+      navigator("/dashboard")
+    }
+  }, [])
 
 
 
   return (
     <animated.div style={fadeIn} className="container py-4">
 
-      <div className="row g-4 mb-4">
-        <div className="col-md-4">
-          <div className="card h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center mb-3">
-                <BarChart2 size={24} className="text-primary me-2" />
-                <h5 className="card-title mb-0 text-light">Total Clicks</h5>
+      {
+        isLoading ?
+          <div>
+            <div className='row g-4 mb-4'>
+              <div className='col-md-4'>
+                <ShimmerAnalyticsCard />
               </div>
-              <h3 className="mb-0 text-light">{stats.totalClicks}</h3>
-              <small className="text-secondary">All time clicks</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center mb-3">
-                <TrendingUp size={24} className="text-success me-2" />
-                <h5 className="card-title mb-0 text-light">Daily Average</h5>
+              <div className='col-md-4'>
+                <ShimmerAnalyticsCard />
               </div>
-              <h3 className="mb-0 text-light">{stats.dailyAverage}</h3>
-              <small className="text-secondary">Clicks per day</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center mb-3">
-                <Users size={24} className="text-info me-2" />
-                <h5 className="card-title mb-0 text-light">Unique Visitors</h5>
+              <div className='col-md-4'>
+                <ShimmerAnalyticsCard />
               </div>
-              <h3 className="mb-0 text-light">{stats.uniqueVisitors}</h3>
-              <small className="text-secondary">Distinct users</small>
             </div>
-          </div>
-        </div>
-      </div>
+            <div className='row g-4'>
+              <div className='col-md-6'>
+                <ShimmerAnalyticsGraph />
+              </div>
+              <div className='col-md-6'>
+                <ShimmerAnalyticsGraph />
+              </div>
+            </div>
+          </div> :
+          <>
+            <div className="row g-4 mb-4">
+              <div className="col-md-4">
+                <div className="card h-100">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <BarChart2 size={24} className="text-primary me-2" />
+                      <h5 className="card-title mb-0 text-light">Total Clicks</h5>
+                    </div>
+                    <h3 className="mb-0 text-light">{totalClicks}</h3>
+                    <small className="text-secondary">All time clicks</small>
+                  </div>
+                </div>
+              </div>
 
-      <div className="row g-4">
-        <div className="col-md-6">
+              <div className="col-md-4">
+                <div className="card h-100">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <TrendingUp size={24} className="text-success me-2" />
+                      <h5 className="card-title mb-0 text-light">Daily Average</h5>
+                    </div>
+                    <h3 className="mb-0 text-light">{dailyAverage}</h3>
+                    <small className="text-secondary">Clicks per day</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4">
+                <div className="card h-100">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center mb-3">
+                      <Users size={24} className="text-info me-2" />
+                      <h5 className="card-title mb-0 text-light">Last 7 Days</h5>
+                    </div>
+                    <h3 className="mb-0 text-light">{last7DaysClicks}</h3>
+                    <small className="text-secondary">Last 7 days clicks</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="row g-4">
+              {/* <div className="col-md-6">
           <div className="card h-100">
             <div className="card-body">
               <div className="d-flex align-items-center mb-3">
@@ -170,33 +197,35 @@ const Analytics = () => {
             </div>
           </div>
         </div>
-
-        <div className="col-md-6">
-          <div className="card h-100">
-            <div className="card-body">
-              <h5 className="card-title mb-3 text-light">Top Referrers</h5>
-              <div className="list-group list-group-flush">
-                {stats.referrers.map((referrer, index) => (
-                  <div key={index} className="list-group-item bg-transparent d-flex justify-content-between align-items-center">
-                    <span className='text-light'>{referrer.source}</span>
-                    <span className="badge bg-primary">{referrer.visits}</span>
+        */}
+              <div className="col-md-6">
+                <div className="card h-100">
+                  <div className="card-body">
+                    <h5 className="card-title text-light">All time view counts</h5>
+                    <div className="w-full h-[400px]">
+                      {
+                        analytics.length ?
+                          <ViewCountChart history={analytics} /> : ""
+                      }
+                    </div>
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-6">
-          <div className="card h-100">
-            <div className="card-body">
-              <h5 className="card-title mb-3 text-light">Top Referrers</h5>
-              <div className="w-full h-[400px]">
-            <Line data={data} options={options} />
-          </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              <div className="col-md-6">
+                <div className="card h-100">
+                  <div className="card-body">
+
+                    <div className="w-full h-[400px]">
+                      {
+                        analytics.length ?
+                          <ViewLocationChart history={analytics} /> : ""
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div></>
+      }
     </animated.div>
   );
 };

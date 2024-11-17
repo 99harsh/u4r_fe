@@ -9,6 +9,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import PublicRoute from './components/PublicRoute';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 function App() {
   return (
